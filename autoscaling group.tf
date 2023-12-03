@@ -9,14 +9,14 @@ resource "aws_autoscaling_group" "autoscaling-group" {
   min_size                  = 1
   health_check_grace_period = 300
   health_check_type         = "ELB"
-  desired_capacity          = 1
+  desired_capacity          = 2
   force_delete              = true
   placement_group           = aws_placement_group.placement-group.id
   launch_configuration      = aws_launch_configuration.launch-config.name #this must be defined in your code already 
   vpc_zone_identifier       = [aws_subnet.pub-sub[0].id, aws_subnet.pub-sub[1].id]
 
   initial_lifecycle_hook {
-    name                 = "lifecycle-hook"
+    name                 = "health-check-lifecycle-hook"
     default_result       = "CONTINUE" #The action to take when the lifecycle hook timeout elapses or if an unexpected failure occurs
     heartbeat_timeout    = 2000 #The time, in seconds, that AWS Auto Scaling waits for the lifecycle hook to complete
     lifecycle_transition = "autoscaling:EC2_INSTANCE_LAUNCHING"
@@ -71,3 +71,10 @@ resource "aws_iam_instance_profile" "instance-profile" {
   role = "arn:aws:iam::520131775371:role/test_role"
 }
 
+resource "null_resource" "depends-on-asg" {
+  triggers = {
+    asg_dependency = aws_autoscaling_group.autoscaling-group.name
+  }
+
+  depends_on = [aws_lb_target_group_attachment.TG-attachment]
+}
