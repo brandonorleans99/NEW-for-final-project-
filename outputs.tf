@@ -18,3 +18,7 @@ output "notification_queue_arn" {
 output "lb_arns" {
   value = [for lb in aws_lb.test-lb : lb.arn]
 }
+
+output "elb-dns-name" {
+     value = [for lb in aws_lb.test-lb : lb.dns_name]
+}
