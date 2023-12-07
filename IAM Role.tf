@@ -35,7 +35,9 @@ resource "aws_iam_policy" "test_policy" {
         Action   = ["ec2:Describe*",
                     "ec2:RunInstances",
                     "ec2:DescribeInstances",
-                    "ec2:TerminateInstances",],
+                    "ec2:TerminateInstances",
+                    "ec2:DetachNetworkInterface",
+                    "ec2:DescribeNetworkInterfaces"],
         Effect   = "Allow",
         Resource = "*",
       },
@@ -45,6 +47,7 @@ resource "aws_iam_policy" "test_policy" {
 
 # Attach the IAM policy to the IAM role
 resource "aws_iam_role_policy_attachment" "test-role-attachment" {
-  policy_arn = aws_iam_policy.test_policy.arn
+  # policy_arn = aws_iam_policy.test_policy.arn
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
   role       = aws_iam_role.test_role.name
 }

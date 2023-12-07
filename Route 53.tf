@@ -12,16 +12,16 @@
 #  records = [aws_acm_certificate.SSL-cert.domain_validation_options[0].resource_record_value] #(unsure)
 # }
 
-# # Create an ACM certificate
-# resource "aws_acm_certificate" "SSL-cert" {
-#   domain_name       = "e-learning.com"
-#   validation_method = "DNS"
 
-#   lifecycle {
-#     create_before_destroy = true
-#   }
-# }
+resource "aws_route53_health_check" "test-HC" {
+  fqdn              = var.health_check_fqdn
+  port              = var.health_check_port
+  type              = var.health_check_type
+  resource_path     = var.health_check_resource_path
+  failure_threshold = var.health_check_failure_threshold
+  request_interval  = var.health_check_request_interval
 
-# data "aws_acm_certificate_validation" "SSL-cert-validation" {
-#   certificate_arn = aws_acm_certificate.SSL-cert.arn
-# }
+  tags = {
+    Name = "test-HC"
+  }
+}

@@ -35,6 +35,13 @@ variable "repository_name" {
   default     = "test_final_repo"
 }
 
+#load balancer name
+variable "load_balancer_name" {
+  description = "Name of the load balancer"
+  type        = string
+  default     = "test-lb"
+}
+
 #ECS cluster
 variable "ecs_cluster_name" {
   description = "Name of the ECS cluster"
@@ -72,17 +79,17 @@ variable "ecs_deployment_minimum_healthy_percent" {
   default     = 100
 }
 
-variable "ecs_capacity_provider" {
-  description = "Capacity provider for the ECS service"
-  type        = string
-  default     = "FARGATE_SPOT"
-}
+# variable "ecs_capacity_provider" {
+#   description = "Capacity provider for the ECS service"
+#   type        = string
+#   default     = "FARGATE_SPOT"
+# }
 
-variable "ecs_capacity_provider_weight" {
-  description = "Weight for the ECS capacity provider strategy"
-  type        = number
-  default     = 4
-}
+# variable "ecs_capacity_provider_weight" {
+#   description = "Weight for the ECS capacity provider strategy"
+#   type        = number
+#   default     = 4
+# }
 
 variable "ecs_service_launch_type" {
   description = "Launch type for the ECS service"
@@ -93,7 +100,7 @@ variable "ecs_service_launch_type" {
 #IAM Role
 variable "role_name" {
   type    = string
-  default = "test_role"
+  default = "test-role"
 }
 
 variable "policy_name" {
@@ -103,7 +110,7 @@ variable "policy_name" {
 
 variable "policy_description" {
   type    = string
-  default = "My test policy"
+  default = "IAM policy with full access"
 }
 
 variable "policy_actions" {
@@ -238,16 +245,23 @@ variable "security_group_ingress_rules" {
   description = "List of ingress rules for the security group"
   default     = [
     {
-      description = "TLS from VPC"
+      description = "allow ssh traffic"
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    },
+    {
+      description = "allow HTTP traffic"
       from_port   = 80
       to_port     = 80
       protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
     },
     {
-      description = "TLS from VPC"
-      from_port   = 443
-      to_port     = 443
+      description = "Custom TCP to allow traffic"
+      from_port   = 8080
+      to_port     = 8080
       protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
     },

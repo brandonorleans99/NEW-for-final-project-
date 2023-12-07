@@ -11,35 +11,37 @@ resource "aws_db_instance" "rds_instance" {
   publicly_accessible  = true
 }
 
+#postgreSQL security group
+resource "aws_security_group" "postgresql-sg" {
+  name        = "postgresql-sg"
+  description = "RDS security group acts as a virtual firewall for instance to control inbound and outbound traffic"
+
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
   # DB subnet group
 resource "aws_db_subnet_group" "my-db-subnet-group" {
   name       = var.db_subnet_group_name
   subnet_ids = [aws_subnet.priv-sub[0].id, aws_subnet.priv-sub[1].id]
   # subnet_ids = var.db_subnet_ids
 }
-  
-#   # Specify the VPC and subnet group
-#   vpc_security_group_ids = [aws_security_group.testing-sg.id]
-#   db_subnet_group_name  = "my-db-subnet-group"
-#   }
 
 resource "aws_db_parameter_group" "my-db-parameter-group" {
   name        = var.db_parameter_group_name
   family      = var.db_parameter_group_family
   description = "My PostgreSQL Parameter Group"
-}
-  
-resource "aws_route53_health_check" "test-HC" {
-  fqdn              = var.health_check_fqdn
-  port              = var.health_check_port
-  type              = var.health_check_type
-  resource_path     = var.health_check_resource_path
-  failure_threshold = var.health_check_failure_threshold
-  request_interval  = var.health_check_request_interval
-
-  tags = {
-    Name = "test-HC"
-  }
 }
 
 #logs

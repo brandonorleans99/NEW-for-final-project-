@@ -13,14 +13,16 @@ resource "aws_ecs_service" "ecs_service" {
   task_definition = aws_ecs_task_definition.task_definition.arn
   desired_count   = var.ecs_desired_count
   deployment_minimum_healthy_percent = var.ecs_deployment_minimum_healthy_percent
+  launch_type     = "FARGATE"
 
-  capacity_provider_strategy {
-    capacity_provider = var.ecs_capacity_provider
-    weight            = var.ecs_capacity_provider_weight
-  }
-
-  network_configuration {
+    network_configuration {
     subnets          = [aws_subnet.priv-sub[0].id, aws_subnet.priv-sub[1].id]  # Replace with your private subnet IDs. Always st
     security_groups  = [aws_security_group.testing-sg.id]  # Replace with your security group IDs
   }
 }
+
+  # capacity_provider_strategy {
+  #   capacity_provider = var.ecs_capacity_provider
+  #   weight            = var.ecs_capacity_provider_weight
+  # }
+
